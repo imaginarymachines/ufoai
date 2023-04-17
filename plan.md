@@ -6,10 +6,20 @@ The idea:
 > SEE: https://js.langchain.com/docs/modules/models/chat/
 
 - `/text` Take prompt, output text
+    - In `app/ufoai/text/route.ts`
+
+### ChatGPT With Loaders, Etc.
+
+- `/ufoai/chat`
+    - - `/text` Take prompt, output text
+    - In `app/ufoai/chat/route.ts`
+- Has UI, too maybe?
 
 ### Few-shot using PromptTemplates
+
 > SEE: https://js.langchain.com/docs/modules/prompts/prompt_templates/
 
+- In `app/ufoai/text/prompt/route.ts`
 - POST `/text/prompt`
     - Send heading, previous paragraphs and keywords
     - This needs to store that as JSON so it can be used
@@ -37,6 +47,9 @@ You can't expect any of this to be great with out embedding data or fine tune mo
 ## UI
 
 - Chat UI
+    - `https://localhost:3000/chat
+    - Make it like ChatGPT, but more useful with loaders, agents, etc.
+
 - UI for crafting blog posts
 - Image generation with Replicate
 
