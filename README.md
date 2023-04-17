@@ -1,8 +1,18 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# UFO API v2
+
+Build v2 of [UFOAI](https://upcycledfoundobjects.com/) with [LangChain](https://js.langchain.com/docs/) and [NextJS 13](https://beta.nextjs.org/).
+
+> This is a very early work in progress. See [plan.md][./plan.md].
+
+- https://pluginmachine.com/want-to-ai-stuff-dont-want-to-learn-python-use-typescript/
+- https://pluginmachine.com/blog/using-langchain-with-nextjs-13
+
 
 ## Getting Started
 
-First, run the development server:
+Add `OPENAI_API_KEY` to .env first
+
+then, run the development server:
 
 ```bash
 npm run dev
