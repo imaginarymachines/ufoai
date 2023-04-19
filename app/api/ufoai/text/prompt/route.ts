@@ -13,6 +13,8 @@ const chat = new ChatOpenAI({
   openAIApiKey:process.env.OPENAI_API_KEY
  });
 
+
+
  const createTemplate = ({heading, text}: {heading: string, text: string[],keywords?:string[]}) => {
     const template = 'Please write the next paragraph under the heading: {heading}';
     const examplePrompt = new PromptTemplate({ template, inputVariables: ["heading"] });
@@ -33,9 +35,40 @@ const chat = new ChatOpenAI({
         /* The template format is the formatting method to use for the template. Should usually be f-string. */
         templateFormat: "f-string",
     });
-    return fewShotPrompt;
+    return fewShotPrompt.format({ heading });
  }
 
+ /**
+  * API for saved prompts
+  * @todo move this to /lib
+  */
+ const promptDb = () => {
+    let db = makeDatabase('prompts.json');
+    return {
+      hasPrompt: (uuid:string) => {
+        return db.has(uuid);
+      },
+      savePrompt:(uuid:string, data: {heading: string, text: string[],keywords?:string[]}) => {
+        db.set(uuid, JSON.stringify(data));
+      },
+      getPrompt:(uuid:string):{
+        heading: string,
+        text: string[],
+        keywords?:string[]
+      } => {
+        let value = db.get(uuid) as string;
+        return JSON.parse(value);
+      },
+      allPrompts() {
+        let prompts = db.getAll();
+        if( !prompts ) {
+          return [];
+        }
+        return prompts;
+      }
+
+ }
+}
 
 /**
  * This route:
@@ -65,9 +98,8 @@ export async function POST(request: Request) {
     const uuid = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
     //create a template
     const template = createTemplate({heading: title, text, keywords});
-    //store the template
-    //how? probably as JSON that's used to init template
-    //return the uuid
+    //save the template
+    promptDb().savePrompt(uuid, {heading: title, text, keywords});
     return new Response(
         JSON.stringify({uuid})
     );
@@ -76,7 +108,6 @@ export async function POST(request: Request) {
 //Use current template to generate text
 export async function GET(request: Request) {
   let db = makeDatabase('arms.json');
-  return new Response(JSON.stringify(db.getAll()));
   //Get prompt from url query args
   const prompt = new URL(request.url).searchParams.get("prompt" ) as string;
   if( !prompt ) {
@@ -85,9 +116,18 @@ export async function GET(request: Request) {
       body: "Missing prompt"
     }));
   }
+  //find the prompt
+  if( !promptDb().hasPrompt(prompt) ) {
+    return new Response(JSON.stringify({
+      status: 404,
+      body: "Prompt not found"
+    }));
+  }
+  const savedPrompt = promptDb().getPrompt(prompt);
+  const template = await createTemplate(savedPrompt.heading,savedPrompt.text);
   //Ask the chat model
   const response = await chat.call([
-    new HumanChatMessage(prompt),
+    new HumanChatMessage(template),
   ]).catch((error) => {
     console.log(error);
     return new Response(JSON.stringify({error}))
