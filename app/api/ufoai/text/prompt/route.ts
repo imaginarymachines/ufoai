@@ -7,6 +7,7 @@ import {
     SystemMessagePromptTemplate,
     FewShotPromptTemplate,
   } from "langchain/prompts";
+import {makeDatabase} from "@/lib/db";
 const chat = new ChatOpenAI({
   temperature: 0,
   openAIApiKey:process.env.OPENAI_API_KEY
@@ -74,6 +75,8 @@ export async function POST(request: Request) {
 
 //Use current template to generate text
 export async function GET(request: Request) {
+  let db = makeDatabase('arms.json');
+  return new Response(JSON.stringify(db.getAll()));
   //Get prompt from url query args
   const prompt = new URL(request.url).searchParams.get("prompt" ) as string;
   if( !prompt ) {
