@@ -4,6 +4,8 @@ Build v2 of [UFOAI](https://upcycledfoundobjects.com/) with [LangChain](https://
 
 > This is a very early work in progress. See [plan.md][./plan.md].
 
+[plan.md](./plan.md)
+
 - https://pluginmachine.com/want-to-ai-stuff-dont-want-to-learn-python-use-typescript/
 - https://pluginmachine.com/blog/using-langchain-with-nextjs-13
 
