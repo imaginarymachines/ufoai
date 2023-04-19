@@ -6,9 +6,8 @@ const chat = new ChatOpenAI({
   temperature: 0,
   openAIApiKey:process.env.OPENAI_API_KEY
 });
-
-//Generate text based on the current prompt
-export async function GET(request: Request) {
+//Generate text based  prompt
+async function handle(request: Request) {
   //Get prompt from url query args
   const prompt = new URL(request.url).searchParams.get("prompt" ) as string;
   if( !prompt ) {
@@ -31,4 +30,11 @@ export async function GET(request: Request) {
   return new Response(
     JSON.stringify({text:response.text})
   );
+}
+
+export async function GET(request: Request) {
+  return handle(request);
+}
+export async function POST(request: Request) {
+  return handle(request);
 }
