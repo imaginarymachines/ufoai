@@ -9,9 +9,9 @@ type TMessages = TMessage[];
 
 const Messages = ({ messages }: { messages: TMessages }) => {
     return (
-        <ul className={'text-white'}>
+        <ul className={' '}>
             {messages.map(({ uuid, message }) => (
-                <li key={uuid} className={'text-white'}>
+                <li key={uuid} className={' '}>
                     {message}
                 </li>
             ))}
@@ -26,6 +26,8 @@ const uuid = () => {
     const randomNumber = () => Math.floor(Math.random() * 10).toString();
     return randomLetter() + randomNumber() + randomLetter() + randomNumber();
 }
+
+
 
 
 
@@ -51,14 +53,6 @@ export default function ChatScreen() {
         const message = e.currentTarget.message.value;
         setMessages([...messages, { uuid: uuid(), message, type: 'human' }]);
         e.currentTarget.reset();
-    }
-
-
-    //when message added to messages array
-    //send to server
-    useEffect(() => {
-        console.log(Object.keys(messages).length);
-        if (Object.keys(messages).length === 0) return;
         setIsLoading(true);
         fetch('/api/ufoai/chat', {
             method: 'POST',
@@ -79,8 +73,10 @@ export default function ChatScreen() {
                 setIsLoading(false);
 
             }
-            );
-    }, [messages])
+        );
+    }
+
+
     return (
         <>
             <div className="grid grid-rows-3 grid-flow-col gap-4">
