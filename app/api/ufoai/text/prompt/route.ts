@@ -82,6 +82,7 @@ export async function POST(request: Request) {
     //Request should have title (string), text (string[]), and optional keywords (string[])
 
     let {title, text, keywords} = await request.json();
+
     if( !title || !text ) {
         return new Response(JSON.stringify({
             status: 400,
@@ -124,7 +125,7 @@ export async function GET(request: Request) {
     }));
   }
   const savedPrompt = promptDb().getPrompt(prompt);
-  const template = await createTemplate(savedPrompt.heading,savedPrompt.text);
+  const template = await createTemplate(savedPrompt);
   //Ask the chat model
   const response = await chat.call([
     new HumanChatMessage(template),

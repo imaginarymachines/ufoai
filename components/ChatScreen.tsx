@@ -53,9 +53,11 @@ export default function ChatScreen() {
         e.currentTarget.reset();
     }
 
+
     //when message added to messages array
     //send to server
     useEffect(() => {
+        console.log(Object.keys(messages).length);
         if (Object.keys(messages).length === 0) return;
         setIsLoading(true);
         fetch('/api/ufoai/chat', {
@@ -67,7 +69,9 @@ export default function ChatScreen() {
             }
         }).then(res => res.json())
             .then(data => {
-                console.log(data);
+                if( data.text ){
+                    setMessages([...messages, { uuid: uuid(), message: data.text, type: 'system' }]);
+                }
                 setIsLoading(false);
 
             }).catch(err => {
@@ -92,10 +96,11 @@ export default function ChatScreen() {
                             <form onSubmit={handleSubmit}>
                                 <div className='w-3/4'>
                                     <label htmlFor="message bg-blue-5000 w-full">Message</label>
-                                    <input type="text" name="message" id="message" className="text-w" />
+                                    <input type="text" name="message" id="message" className="text-black" />
                                 </div>
                                 <div className="w-1/4">
-                                    <button type="submit" >Send</button>
+                                <input type="reset" value="Reset" />
+                                <button type="submit" >Send</button>
                                 </div>
                             </form>
                         </div>
