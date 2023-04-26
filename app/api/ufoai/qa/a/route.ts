@@ -1,12 +1,12 @@
 import { OpenAI } from "langchain/llms/openai";
 import { ConversationalRetrievalQAChain } from "langchain/chains";
-import { HNSWLib } from "langchain/vectorstores/hnswlib";
+import { MemoryVectorStore } from "langchain/vectorstores/memory";
 import { OpenAIEmbeddings } from "langchain/embeddings/openai";
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
-import * as fs from "fs";
 import { NextResponse } from "next/server";
 
- const run = async () => {
+//This was a test, probably delete
+ const handler = async () => {
   /* Initialize the LLM to use to answer the question */
   const model = new OpenAI({
     openAIApiKey:process.env.OPENAI_API_KEY,
@@ -18,7 +18,7 @@ import { NextResponse } from "next/server";
   const textSplitter = new RecursiveCharacterTextSplitter({ chunkSize: 1000 });
   const docs = await textSplitter.createDocuments([text]);
   /* Create the vectorstore */
-  const vectorStore = await HNSWLib.fromDocuments(docs, new OpenAIEmbeddings());
+  const vectorStore = await MemoryVectorStore.fromDocuments(docs, new OpenAIEmbeddings());
   /* Create the chain */
   const chain = ConversationalRetrievalQAChain.fromLLM(
     model,
@@ -36,12 +36,10 @@ import { NextResponse } from "next/server";
   });
   console.log(followUpRes);
   return NextResponse.json({
-    followUpRes
-
+    text:followUpRes.text
   })
 };
 
 export async function GET(request: Request) {
-  await run();
-  return new Response("Done");
+  return await handler();
 }

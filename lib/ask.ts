@@ -2,22 +2,28 @@ import { BaseLLM } from 'langchain/llms/base';
 import { loadQAStuffChain, loadQAMapReduceChain } from "langchain/chains";
 import { Document } from "langchain/document";
 import { WebBrowser } from "langchain/tools/webbrowser";
-import { ChatOpenAI } from "langchain/chat_models/openai";
 import { OpenAIEmbeddings } from "langchain/embeddings/openai";
 import { BaseChatModel } from 'langchain/dist/chat_models/base';
+
+/**
+ * Ask question about arbitrary documents
+ */
 export const ask = async ({ docs, question, llm }: {
     docs: Document[],
     question: string,
     llm: BaseLLM
 }) => {
-    const chainA = loadQAStuffChain(llm);
-    const res = await chainA.call({
+    const chain = loadQAStuffChain(llm);
+    const res = await chain.call({
         input_documents: docs,
         question,
     });
     return res;
 };
 
+/**
+ * Ask question about a website
+ */
 export async function askWebsite({
     url,
     question,
