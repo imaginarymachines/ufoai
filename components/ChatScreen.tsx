@@ -10,8 +10,12 @@ type TMessages = TMessage[];
 const Messages = ({ messages }: { messages: TMessages }) => {
     return (
         <ul className={' '}>
-            {messages.map(({ uuid, message }) => (
-                <li key={uuid} className={' '}>
+            {messages.map(({ uuid, message,type }) => (
+                <li key={uuid} className={`${'system' === type ? 'transition-opacity ease-in duration-700 opacity-100': ''}`}>
+                    <span>
+                        {'human' === type ? '👩‍💻' : '🤖'}
+                    </span>
+
                     {message}
                 </li>
             ))}
@@ -64,6 +68,7 @@ export default function ChatScreen() {
         }).then(res => res.json())
             .then(data => {
                 if( data.text ){
+                    //Is loosing the human question
                     setMessages([...messages, { uuid: uuid(), message: data.text, type: 'system' }]);
                 }
                 setIsLoading(false);
@@ -82,21 +87,23 @@ export default function ChatScreen() {
             <div className="grid grid-rows-3 grid-flow-col gap-4">
                 <div className="row-span-3 ">
                     <h2 className="text-2xl">Chat History</h2>
+                    <h2 className="text-2xl">Documents</h2>
                 </div>
                 <div className="col-span-2">
                     <div className="flex flex-col h-screen justify-between">
                         <div className="h-10">
                             <Messages messages={messages} />
+                            {isLoading && <p className="ease-in ease-out duration-700 opacity-100 ">Loading...</p>}
                         </div>
                         <div className={`h-10 ${isLoading ? 'animate-pulse': ''}`}>
                             <form onSubmit={handleSubmit}>
                                 <div className='w-3/4'>
                                     <label htmlFor="message bg-blue-5000 w-full">Message</label>
-                                    <input type="text" name="message" id="message" className="text-black" />
+                                    <input type="text" name="message" id="message" className="text-black border-2 border-black" />
                                 </div>
                                 <div className="w-1/4">
-                                <input type="reset" value="Reset" />
-                                <button type="submit" >Send</button>
+                                <input type="reset" value="Reset" className="text-black border-2 border-black"  />
+                                <button type="submit" className="text-black border-2 border-black">Send</button>
                                 </div>
                             </form>
                         </div>
